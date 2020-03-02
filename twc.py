@@ -109,15 +109,15 @@ def draw_cloud(cleantweets):
     tokens = word_tokenize(text)
     dic = Counter(tokens)
     print(dic.most_common(max_words))
-    twitter_mask = np.array(Image.open("twitter-logo.jpg"))
+    twitter_mask = np.array(Image.open("twitter-logo.png"))
     wordcloud = PersianWordCloud(
         only_persian=True,
         max_words=max_words,
         margin=0,
-        width=800,
-        height=800,
-        min_font_size=1,
-        max_font_size=500,
+        width=5000,
+        height=5000,
+        min_font_size=4,
+        max_font_size=1000,
         background_color="white",
         mask=twitter_mask
     ).generate(text)
