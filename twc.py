@@ -141,7 +141,7 @@ def clean_tweet(tweet):
 # persian word cloud repo: https://github.com/mehotkhan/persian-word-cloud
 
 
-def draw_cloud(cleantweets, image_path, show_image=False):
+def draw_cloud(cleantweets, image_path, monthly=False ,show_image=False):
     text = " ".join(str(tweet) for tweet in cleantweets)
     text = get_display(arabic_reshaper.reshape(text))
     tokens = word_tokenize(text)
@@ -149,9 +149,12 @@ def draw_cloud(cleantweets, image_path, show_image=False):
     print(dic.most_common(max_words))
     twitter_mask = np.array(Image.open("twitter-logo.png"))
     font_path = select_a_font()
+    words = max_words
+    if monthly:
+        words = max_words // 2
     wordcloud = WordCloud(
         font_path=font_path,
-        max_words=max_words,
+        max_words=words,
         margin=0,
         width=5000,
         height=5000,
@@ -207,10 +210,10 @@ def generate_word_cloud():
             month_data = year_data[year_data['date'].str[0: 7] == month]
             image_path = os.path.join(
                 monthly_image_path, month+image_file_extension)
-            draw_cloud(month_data.clean_tweet.values, image_path)
+            draw_cloud(month_data.clean_tweet.values, image_path, True)
 
     image_path = os.path.join(output_dir, username+image_file_extension)
-    draw_cloud(data.clean_tweet.values, image_path, True)
+    draw_cloud(data.clean_tweet.values, image_path, False, True)
 
 
 def main():
