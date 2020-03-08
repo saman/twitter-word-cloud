@@ -112,7 +112,7 @@ def remove_emoji(tweet):
 
 def remove_punctuations(tweet):
     return re.sub(
-        r'''[!()-\[\]{};:'"\,<>.\/?@#$%^&*_~=\\|`]''', '', tweet)
+        r'''[!()-\[\]{};:'"\,<>.\/?؟@#$%^&*_~=\\|`]''', '', tweet)
 
 # preprocess tweet text (remove links, stopwords, images, mentions and numbers form tweets text )
 
@@ -159,7 +159,7 @@ def draw_cloud(cleantweets, image_path, monthly=False ,show_image=False):
         width=5000,
         height=5000,
         min_font_size=4,
-        max_font_size=750,
+        max_font_size=700,
         background_color="white",
         mask=twitter_mask
     )
