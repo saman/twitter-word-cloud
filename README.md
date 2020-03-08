@@ -9,9 +9,12 @@
 - <a href="https://github.com/pandas-dev/pandas">Pandas</a>
 
 # how to run :
+- `python3 -m venv venv`
+- `source venv/bin/activate`
+- `pip install --upgrade pip`
 - `pip install -r requirements.txt` (Install dependencies)
-- `python twc.py username words-count` (python twc.py behrozBakhtiari 200)
+- `python twc.py username words-count` (python twc.py irLinja 500)
 
 # Sample Output:
 
-![Sample Result](BehrozBakhtiari.png?raw=true)
+![Sample Result](irLinja.png?raw=true)

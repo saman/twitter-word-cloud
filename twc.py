@@ -117,7 +117,7 @@ def draw_cloud(cleantweets):
         width=5000,
         height=5000,
         min_font_size=4,
-        max_font_size=900,
+        max_font_size=750,
         background_color="white",
         mask=twitter_mask
     ).generate(text)
