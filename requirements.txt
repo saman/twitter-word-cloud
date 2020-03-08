@@ -1,4 +1,6 @@
 twint
 hazm
-persian_wordcloud
+wordcloud
 pandas
+arabic_reshaper
+python-bidi
