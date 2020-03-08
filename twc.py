@@ -110,6 +110,10 @@ def remove_emoji(tweet):
 
     return emoji_pattern.sub(r'', tweet)
 
+def remove_punctuations(tweet):
+    return re.sub(
+        r'''[!()-\[\]{};:'"\,<>.\/?@#$%^&*_~=\\|`]''', '', tweet)
+
 # preprocess tweet text (remove links, stopwords, images, mentions and numbers form tweets text )
 
 
@@ -121,6 +125,7 @@ def clean_tweet(tweet):
     tweet = remove_links(tweet)
     tweet = remove_mentions(tweet)
     tweet = remove_emoji(tweet)
+    tweet = remove_punctuations(tweet)
     tweet = remove_reserved_words(tweet)
     normalizer = Normalizer()
     tweet = normalizer.normalize(tweet)
