@@ -16,6 +16,7 @@ import os
 from random import randint
 from arabic_reshaper import arabic_reshaper
 from bidi.algorithm import get_display
+import json
 
 
 punctuation_list = list(punctuation)
@@ -26,10 +27,12 @@ parser.add_argument("-f", "--font", help="font name")
 parser.add_argument(
     "-c", "--count", help="Number of words to show on word cloud image")
 parser.add_argument("-l", "--limit", help="Number of tweets to pull")
+parser.add_argument("-i", "--input", help="input twitter archive csv file")
 
 username = ""
 max_words = 200
 tweets_file_path = ""
+tweets_archive_file_path = ""
 image_file_path = ""
 limit = None
 font_name = ""
@@ -49,12 +52,33 @@ def select_a_font():
         return os.path.join(fonts_dir, fonts[font_index])
     return ""
 
+def fix_date(x):
+    return pd.to_datetime(x).strftime("%Y-%m-%d")
+
+def export_archive_tweets():
+    fo = open(tweets_archive_file_path, '+r')
+    json_content = fo.read()
+    fo.close()
+    json_content = json_content.replace('window.YTD.tweet.part0 =', '')
+    data_json = json.loads(json_content)
+    data = pd.json_normalize(data_json)
+    data.rename(columns = {'tweet.full_text':'tweet'}, inplace = True)
+
+    data.insert(len(data.columns), 'date', '')
+    data['date'] = data['tweet.created_at'].apply(lambda x: fix_date(x))
+    data.to_csv(tweets_file_path, index=False, encoding='utf-8')
 
 def export_tweets():
     if os.path.isfile(tweets_file_path):
         print(f"{tweets_file_path} is found and it will be processed.")
         print("If you want to get tweets from twitter, remove this file")
         return
+
+    if os.path.isfile(tweets_archive_file_path):
+        print(f"{tweets_archive_file_path} is found as archive and it will be processed.")
+        print("If you want to get tweets from twitter archive file, remove the --input (-i) argument")
+        return export_archive_tweets()
+
     c = twint.Config()
 
     if limit is not None:
@@ -122,6 +146,8 @@ def clean_tweet(tweet):
     tweet = tweet.lower()
     # remove # so we preserve hashtags for the cloud
     tweet = tweet.replace("#", "")
+    # remove RT which is the sign of retweet
+    tweet = tweet.lstrip("rt ")
     tweet = remove_links(tweet)
     tweet = remove_mentions(tweet)
     tweet = remove_emoji(tweet)
@@ -179,12 +205,16 @@ def check_dir(path):
 
 def generate_word_cloud():
     export_tweets()
+
     if not os.path.isfile(tweets_file_path):
         print("couldn't get tweets, please try again")
         return False
     data = pd.read_csv(tweets_file_path)
+
+    tweet_col = 11
+
     if 'clean_tweet' not in data.columns:
-        data.insert(11, 'clean_tweet', '')
+        data.insert(len(data.columns), 'clean_tweet', '')
         data['clean_tweet'] = data['tweet'].apply(lambda x: clean_tweet(x))
 
     years = data['date'].str[0: 4].unique()
@@ -223,6 +253,7 @@ def main():
     global image_file_path
     global limit
     global font_name
+    global tweets_archive_file_path
 
     args = parser.parse_args()
     username = args.username
@@ -234,6 +265,9 @@ def main():
 
     limit = args.limit
     font_name = args.font
+
+    if (args.input is not None):
+        tweets_archive_file_path = args.input
 
     tweets_file_path = os.path.join(output_dir, f"{username}.csv")
 
