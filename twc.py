@@ -76,7 +76,7 @@ def export_tweets():
 
     if os.path.isfile(tweets_archive_file_path):
         print(f"{tweets_archive_file_path} is found as archive and it will be processed.")
-        print("If you want to get tweets from twitter archive file, remove the --input (-i) argument")
+        print("If you want to get tweets from twitter, remove the --input or -i argument")
         return export_archive_tweets()
 
     c = twint.Config()
